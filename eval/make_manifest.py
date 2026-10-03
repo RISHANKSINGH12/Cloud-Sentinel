@@ -1,0 +1,54 @@
+import csv
+from pathlib import Path
+
+ROOT = Path(__file__).resolve().parent.parent
+DATA = ROOT / "data"
+
+# (file, fault, service, role, note)
+RUNS = [
+    ("data_healthy.csv", "none", "all", "train", ""),
+    ("data_healthy2.csv", "none", "all", "train", ""),
+    ("data_healthy_pages.csv", "none", "all", "train",
+     "5-minute three-page healthy baseline; zero timeouts or latency alerts"),
+    ("data_healthy_pages_2_complete.csv", "none", "all", "train",
+     "independent 5-minute three-page healthy baseline; zero timeouts or latency alerts"),
+    ("data_run1.csv", "cpu_hog", "productcatalogservice", "train", ""),
+    ("data_cpu_hog_cartservice_1.csv", "cpu_hog", "cartservice", "train", ""),
+    ("data_cpu_hog_currencyservice_1.csv", "cpu_hog", "currencyservice", "train", ""),
+    ("data_run3.csv", "mem_leak", "currencyservice", "train", ""),
+    ("data_mem_leak_cartservice_1.csv", "mem_leak", "cartservice", "train", ""),
+    ("data_run5.csv", "net_delay", "productcatalogservice", "train", ""),
+    ("data_net_delay_currencyservice_1.csv", "net_delay", "currencyservice", "train",
+     "page timeouts occurred during the fault"),
+    ("data_net_delay_recommendationservice_1.csv", "net_delay", "recommendationservice", "train",
+     "product and cart page timeouts occurred during the fault"),
+    ("data_net_delay_adservice_1.csv", "net_delay", "adservice", "train", ""),
+    ("data_cpu_hog_frontend_1.csv", "cpu_hog", "frontend", "test", ""),
+    ("data_cpu_hog_checkoutservice_1.csv", "cpu_hog", "checkoutservice", "test", ""),
+    ("data_mem_leak_checkoutservice_2.csv", "mem_leak", "checkoutservice", "test", ""),
+    ("data_mem_leak_paymentservice_1.csv", "mem_leak", "paymentservice", "test", ""),
+    ("data_net_delay_cartservice_1.csv", "net_delay", "cartservice", "test", ""),
+    ("data_net_delay_paymentservice_1.csv", "net_delay", "paymentservice", "test",
+     "not visible in shop latency; report as limitation"),
+    ("data_net_delay_cartservice_2.csv", "net_delay", "cartservice", "test",
+     "all three pages slowed during the fault; no timeouts"),
+    ("data_net_delay_paymentservice_2.csv", "net_delay", "paymentservice", "test",
+     "delay was not visible in the measured page latencies"),
+    ("data_cpu_hog_recommendationservice_1.csv", "cpu_hog", "recommendationservice", "partial",
+     "use fault window only; crash loop after"),
+    ("data_mem_leak_recommendationservice_1.csv", "mem_leak", "recommendationservice", "excluded",
+     "pod was already crash-looping"),
+    ("data_mem_leak_checkoutservice_1.csv", "mem_leak", "checkoutservice", "excluded", "short run"),
+    ("data_run4_bad.csv", "unknown", "unknown", "excluded", "bad run"),
+    ("data_test.csv", "unknown", "unknown", "excluded", "scratch test"),
+]
+
+out = ROOT / "eval" / "manifest.csv"
+with open(out, "w", newline="") as f:
+    w = csv.writer(f)
+    w.writerow(["file", "fault", "service", "role", "note"])
+    for row in RUNS:
+        if not (DATA / row[0]).exists():
+            print("MISSING FILE:", row[0])
+        w.writerow(row)
+print("saved", out)
