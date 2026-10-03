@@ -119,6 +119,17 @@ The held-out set contains eight runs:
 
 Only two held-out recordings include separate Product and Cart latency columns. The other six contain Home latency only; the dashboard marks the missing comparisons unavailable rather than treating them as unaffected. In the newer cartservice network-delay run, all three measured pages slowed. The paymentservice run did not show a page-latency increase. Page impact alone is not used to infer a delayed service.
 
+## Closed-loop healing (sandbox cluster)
+
+`remediator/live_heal.py` runs the full loop on the disposable kind cluster: it reads live Prometheus
+metrics, detects CPU and memory faults with the streaming detector in `detector/online.py`, chooses the
+target without using `faults.csv`, restarts that service's pod only when `--approve` is passed and every
+safety check allows it, then verifies recovery and writes an audit log. Network-delay faults raise a
+page-latency alarm only; no action is taken because page latency does not identify the service.
+
+See [docs/CLOSED_LOOP.md](docs/CLOSED_LOOP.md) for how to run it and `python eval\closed_loop_report.py`
+to summarize results. The dashboard's recovery demo remains a synthetic simulation.
+
 ## Limitations
 
 This is an evaluation prototype, not an autonomous production remediation system. Real automatic remediation, approval workflows, production-grade monitoring, and comprehensive page-latency coverage are not implemented. The dashboard's recovery flow is a sandbox simulation, not a real service restart.
