@@ -1,4 +1,4 @@
-# Cloud Sentinel- Self-Healing Cloud System
+# Cloud Sentinel - Self-Healing Cloud System
 
 An experiment-driven prototype for cloud fault detection and root-cause analysis. It analyzes recorded service metrics and shop-page latency, evaluates detectors on held-out experiments, and presents evidence in a Streamlit dashboard.
 
