@@ -35,7 +35,7 @@ def cpu_hog(service, seconds):
     time.sleep(seconds)
 
     # cleanup: delete the pod, Kubernetes replaces it with a healthy one
-    sh(["kubectl", "delete", "pod", pod])
+    sh(["kubectl", "delete", "pod", pod, "--ignore-not-found"])
     end = now()
     print(f"{end}  fault removed, pod replaced")
 

@@ -46,7 +46,7 @@ def net_delay(service, seconds, delay_ms):
 
     time.sleep(max(seconds - 15, 0))
 
-    sh(["kubectl", "delete", "pod", pod])
+    sh(["kubectl", "delete", "pod", pod, "--ignore-not-found"])
     end = now()
     print(f"{end}  fault removed, pod replaced")
 

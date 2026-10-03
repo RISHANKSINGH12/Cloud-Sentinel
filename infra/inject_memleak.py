@@ -42,7 +42,7 @@ def mem_leak(service, seconds):
 
     time.sleep(seconds)
 
-    sh(["kubectl", "delete", "pod", pod])
+    sh(["kubectl", "delete", "pod", pod, "--ignore-not-found"])
     end = now()
     print(f"{end}  fault removed, pod replaced")
 
