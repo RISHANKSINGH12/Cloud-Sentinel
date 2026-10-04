@@ -2,7 +2,7 @@
 
 An experiment-driven prototype for cloud fault detection and root-cause analysis. It analyzes recorded service metrics and shop-page latency, evaluates detectors on held-out experiments, and presents evidence in a Streamlit dashboard.
 
-> **Current scope:** The dashboard analyzes saved CSV recordings. Its self-healing workflow is a synthetic sandbox demonstration only; it does not restart real services or connect to Kubernetes. Fault-injection tools do interact with Kubernetes and can delete pods. Use them only in a disposable test cluster.
+> **Current scope:** The dashboard analyzes saved CSV recordings; it does not connect to Kubernetes, and its recovery demo is a synthetic simulation. Separately, `remediator/live_heal.py` is a closed-loop controller that was run against a disposable local kind cluster (Online Boutique, namespace `default`). Only with `--approve` does it restart pods, in response to injected CPU and memory faults. It is a prototype for that sandbox, not a production system. The fault injectors and `--approve` can delete pods, so use them only in a disposable test cluster.
 
 ## Run the dashboard
 
@@ -130,16 +130,46 @@ page-latency alarm only; no action is taken because page latency does not identi
 See [docs/CLOSED_LOOP.md](docs/CLOSED_LOOP.md) for how to run it and `python eval\closed_loop_report.py`
 to summarize results. The dashboard's recovery demo remains a synthetic simulation.
 
+### Measured results (kind cluster, 7 attempts)
+
+Each run injected one fault for about 3 minutes. The controller was started about a minute earlier with `--approve`.
+
+| Fault | Service | Detected after | Pod replaced after | Result |
+| --- | --- | --- | --- | --- |
+| CPU hog | cartservice | 36 s | 69 s | escalated: verification ran too early (see below) |
+| CPU hog | cartservice | 40 s | 72 s | recovered |
+| CPU hog | checkoutservice | 32 s | 44 s | recovered |
+| CPU hog | currencyservice | 36 s | 49 s | recovered |
+| Memory leak | paymentservice | 74 s | 87 s | recovered |
+| Memory leak | checkoutservice | 29 s | 40 s | recovered |
+| Memory leak | cartservice | 85 s | 118 s | recovered |
+
+- The controller chose the correct service in 7 of 7 attempts without reading `eval/faults.csv`, and 6 of 7 were verified as recovered.
+- Median detection delay was 36 s. Median time to fix (fault start until the replacement pod was Ready) was 60 s for the six recovered runs. Confirming recovery adds the settle time and a 45 s watch, so the verdict arrived a median of 198 s after fault start.
+- The unassisted figure of about 181 s is the length of the injected fault window, not a measure of how long a human operator would take.
+- The one escalation used the default 30 s settle time. The new cartservice pod was still starting up, and its CPU was above the pre-fault limit at the check and back to normal about 20 s later. The other six runs used `--settle-s 90`; the default in the code is unchanged.
+- One further cartservice memory-leak run is not counted: Kubernetes restarted the container after a failed liveness probe before the leak grew, and the controller took no action. The report only counts attempts where the controller acted, so a run like this does not appear in its totals.
+- With 7 attempts on four services and two fault types, treat these as demonstration results, not statistics. Raw results are in `eval/closed_loop_results.csv` and the audit log is `eval/heal_log.jsonl`.
+
 ## Limitations
 
-This is an evaluation prototype, not an autonomous production remediation system. Real automatic remediation, approval workflows, production-grade monitoring, and comprehensive page-latency coverage are not implemented. The dashboard's recovery flow is a sandbox simulation, not a real service restart.
+This is a prototype evaluated on one disposable kind cluster, not a production remediation system.
+
+- **Small sample.** There are 7 closed-loop attempts on four services (cartservice, checkoutservice, currencyservice, paymentservice), one fault per run.
+- **Fault coverage.** The controller acts only on CPU and memory faults. Network-delay faults are not caught by the resource detector in the held-out replay, and page latency alone does not identify a service, so no action is taken for them.
+- **Detection margin.** Two of the three memory-leak detections scored only just above the threshold (z = 6.3 and 6.5 against 6.0), so smaller or slower leaks relative to a service's normal memory may be missed. This was not tested further.
+- **Baseline.** "Normal" is learned from the first 50 seconds after the controller starts. This assumes the system is healthy then, and it does not adapt to later drift.
+- **Verification timing.** Verification can fail on a healthy replacement that is still starting up. This happened once, with the default 30 s settle time.
+- **Single action.** The only remediation is restarting one pod. There is no rollback, scaling, or operator notification.
+- **Safety scope.** The guards allow only the `kind-aiops` context, the `default` namespace and the ten application services. Nothing has been tested outside that.
+- **Dashboard.** The dashboard's recovery flow is still a synthetic simulation, not a real service restart.
 
 ## Future enhancements
 
 The following are planned extensions; they are not implemented in the current prototype:
 
-- **Live monitoring:** ingest metrics from a connected, explicitly selected test environment instead of relying only on saved recordings.
-- **Controlled Kubernetes recovery:** add real recovery actions limited to a disposable namespace, with explicit operator approval and a strict allowlist.
-- **Recovery verification and rollback:** run post-action health checks, record the outcome, and provide a safe rollback or escalation path if recovery fails.
-- **Broader evaluation:** add more fault scenarios and independent recordings, then evaluate detection quality and false alarms on a larger held-out dataset.
-- **Access control and auditing:** add authentication, role-based permissions, and an audit trail for approved recovery actions.
+- **More environments:** run the controller against other explicitly selected test environments. So far it has run only on one kind cluster.
+- **Better verification:** wait for each service's readiness and warm-up instead of a fixed settle time, and add a rollback or operator-notification path when recovery fails.
+- **Broader evaluation:** more runs per fault and service, more fault types (including a service-level signal for network delay), long healthy runs to measure false alarms, and reporting of missed detections, which the current report does not count.
+- **Adaptive detection:** re-learn baselines over time and scale thresholds to each service's normal memory so smaller leaks are not missed.
+- **Access control:** add authentication and role-based approval for recovery actions. The audit log exists but is a local file.
