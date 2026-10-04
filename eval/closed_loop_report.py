@@ -4,6 +4,11 @@ Joins eval/heal_log.jsonl (written by remediator/live_heal.py) with
 eval/faults.csv (written by the injectors, which know the true fault).
 Unassisted recovery is the injected window length, because without the
 controller the injector only removes the fault by deleting the pod at the end.
+
+Two controller timings are reported separately:
+  fix_time_s       fault start -> replacement pod Ready (the fault is gone)
+  recovery_time_s  fault start -> controller confirmed recovery (includes the
+                   settle + verify watch, so it is longer than the real fix)
 """
 import json
 from pathlib import Path
@@ -31,6 +36,18 @@ def match_fault(faults, t_detect):
     return hits.iloc[-1] if len(hits) else None
 
 
+def restart_time(events, service, t_detect, t_end):
+    """Time of the successful restart of `service` between detection and the verdict."""
+    if "time" not in events.columns:
+        return None
+    hits = events[(events["event"] == "restart") & (events["service"] == service)]
+    if "ok" in hits.columns:
+        hits = hits[hits["ok"] == True]  # noqa: E712
+    times = pd.to_datetime(hits["time"])
+    times = times[(times >= t_detect) & (times <= t_end)]
+    return times.max() if len(times) else None
+
+
 def build_results(events, faults):
     rows = []
     done = events[events["event"].isin(["recovered", "escalate"])
@@ -42,6 +59,7 @@ def build_results(events, faults):
             continue
         recovered = e["event"] == "recovered"
         t_rec = pd.Timestamp(e["t_recovered"]) if recovered else None
+        t_fixed = restart_time(events, e["service"], t_detect, pd.Timestamp(e["time"]))
         rows.append({
             "fault": fault["fault"],
             "true_service": fault["service"],
@@ -49,6 +67,7 @@ def build_results(events, faults):
             "correct_target": e["service"] == fault["service"],
             "detect_delay_s": (t_detect - fault["start"]).total_seconds(),
             "recovered": recovered,
+            "fix_time_s": (t_fixed - fault["start"]).total_seconds() if t_fixed is not None else None,
             "recovery_time_s": (t_rec - fault["start"]).total_seconds() if recovered else None,
             "unassisted_s": (fault["end"] - fault["start"]).total_seconds(),
         })
@@ -70,8 +89,11 @@ def main():
     ok = results[results["recovered"]]
     if len(ok):
         print(f"median detection delay: {results['detect_delay_s'].median():.0f}s   "
-              f"median recovery (with controller): {ok['recovery_time_s'].median():.0f}s   "
               f"unassisted baseline: {ok['unassisted_s'].median():.0f}s")
+        fixed = ok["fix_time_s"].dropna()
+        if len(fixed):
+            print(f"median time to fix (fault gone): {fixed.median():.0f}s   "
+                  f"median time to confirm recovery: {ok['recovery_time_s'].median():.0f}s")
     print(f"saved {OUT}")
 
 

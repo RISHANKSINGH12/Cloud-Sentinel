@@ -1,0 +1,45 @@
+{"time": "2026-10-04T02:46:04", "event": "start", "context": "kind-aiops", "namespace": "default", "mode": "DRY-RUN"}
+{"time": "2026-10-04T03:16:06", "event": "stop", "actions": 0}
+{"time": "2026-10-04T03:19:40", "event": "start", "context": "kind-aiops", "namespace": "default", "mode": "DRY-RUN"}
+{"time": "2026-10-04T03:23:41", "event": "detected", "service": "cartservice", "metric": "cpu_cores", "z": 9.1}
+{"time": "2026-10-04T03:23:41", "event": "would_restart", "service": "cartservice", "note": "dry run; pass --approve to act"}
+{"time": "2026-10-04T03:23:47", "event": "detected", "service": "cartservice", "metric": "cpu_cores", "z": 8.4}
+{"time": "2026-10-04T03:23:47", "event": "refused", "service": "cartservice", "reason": "cartservice is in cooldown"}
+{"time": "2026-10-04T03:31:42", "event": "stop", "actions": 0}
+{"time": "2026-10-04T03:34:41", "event": "start", "context": "kind-aiops", "namespace": "default", "mode": "ACTIVE"}
+{"time": "2026-10-04T03:46:45", "event": "stop", "actions": 0}
+{"time": "2026-10-04T04:25:04", "event": "start", "context": "kind-aiops", "namespace": "default", "mode": "ACTIVE"}
+{"time": "2026-10-04T04:28:33", "event": "detected", "service": "cartservice", "metric": "cpu_cores", "z": 17.4}
+{"time": "2026-10-04T04:29:06", "event": "restart", "service": "cartservice", "ok": true, "detail": "replaced cartservice-574c7f4cdd-8rwlj"}
+{"time": "2026-10-04T04:30:24", "event": "escalate", "service": "cartservice", "t_detect": "2026-10-04T04:28:33", "t_action": "2026-10-04T04:28:33", "reason": "cpu_cores median 0.092 still above limit 0.071"}
+{"time": "2026-10-04T04:40:07", "event": "stop", "actions": 1}
+{"time": "2026-10-04T04:41:24", "event": "start", "context": "kind-aiops", "namespace": "default", "mode": "ACTIVE"}
+{"time": "2026-10-04T04:44:52", "event": "detected", "service": "cartservice", "metric": "cpu_cores", "z": 18.9}
+{"time": "2026-10-04T04:45:24", "event": "restart", "service": "cartservice", "ok": true, "detail": "replaced cartservice-574c7f4cdd-b7sc2"}
+{"time": "2026-10-04T04:47:42", "event": "recovered", "service": "cartservice", "metric": "cpu_cores", "t_detect": "2026-10-04T04:44:52", "t_action": "2026-10-04T04:44:52", "t_recovered": "2026-10-04T04:47:42", "detail": "CPU, memory and page latency are back within baseline"}
+{"time": "2026-10-04T04:57:43", "event": "start", "context": "kind-aiops", "namespace": "default", "mode": "ACTIVE"}
+{"time": "2026-10-04T05:00:44", "event": "detected", "service": "checkoutservice", "metric": "cpu_cores", "z": 10.4}
+{"time": "2026-10-04T05:00:56", "event": "restart", "service": "checkoutservice", "ok": true, "detail": "replaced checkoutservice-7ddc4696cf-rth22"}
+{"time": "2026-10-04T05:03:15", "event": "recovered", "service": "checkoutservice", "metric": "cpu_cores", "t_detect": "2026-10-04T05:00:44", "t_action": "2026-10-04T05:00:44", "t_recovered": "2026-10-04T05:03:15", "detail": "CPU, memory and page latency are back within baseline"}
+{"time": "2026-10-04T05:08:56", "event": "start", "context": "kind-aiops", "namespace": "default", "mode": "ACTIVE"}
+{"time": "2026-10-04T05:12:03", "event": "detected", "service": "currencyservice", "metric": "cpu_cores", "z": 8.1}
+{"time": "2026-10-04T05:12:16", "event": "restart", "service": "currencyservice", "ok": true, "detail": "replaced currencyservice-6478b9fcf7-7hvg7"}
+{"time": "2026-10-04T05:14:34", "event": "recovered", "service": "currencyservice", "metric": "cpu_cores", "t_detect": "2026-10-04T05:12:03", "t_action": "2026-10-04T05:12:03", "t_recovered": "2026-10-04T05:14:34", "detail": "CPU, memory and page latency are back within baseline"}
+{"time": "2026-10-04T05:23:57", "event": "stop", "actions": 1}
+{"time": "2026-10-04T05:36:46", "event": "start", "context": "kind-aiops", "namespace": "default", "mode": "ACTIVE"}
+{"time": "2026-10-04T05:40:30", "event": "detected", "service": "paymentservice", "metric": "memory_mb", "z": 7.4}
+{"time": "2026-10-04T05:40:43", "event": "restart", "service": "paymentservice", "ok": true, "detail": "replaced paymentservice-78478447c-cr5hk"}
+{"time": "2026-10-04T05:43:01", "event": "recovered", "service": "paymentservice", "metric": "memory_mb", "t_detect": "2026-10-04T05:40:30", "t_action": "2026-10-04T05:40:30", "t_recovered": "2026-10-04T05:43:01", "detail": "CPU, memory and page latency are back within baseline"}
+{"time": "2026-10-04T05:47:42", "event": "start", "context": "kind-aiops", "namespace": "default", "mode": "ACTIVE"}
+{"time": "2026-10-04T06:00:48", "event": "start", "context": "kind-aiops", "namespace": "default", "mode": "ACTIVE"}
+{"time": "2026-10-04T06:03:52", "event": "detected", "service": "checkoutservice", "metric": "memory_mb", "z": 6.5}
+{"time": "2026-10-04T06:04:03", "event": "restart", "service": "checkoutservice", "ok": true, "detail": "replaced checkoutservice-7ddc4696cf-6vnrk"}
+{"time": "2026-10-04T06:06:20", "event": "recovered", "service": "checkoutservice", "metric": "memory_mb", "t_detect": "2026-10-04T06:03:52", "t_action": "2026-10-04T06:03:52", "t_recovered": "2026-10-04T06:06:20", "detail": "CPU, memory and page latency are back within baseline"}
+{"time": "2026-10-04T06:15:48", "event": "stop", "actions": 1}
+{"time": "2026-10-04T21:57:24", "event": "start", "context": "kind-aiops", "namespace": "default", "mode": "ACTIVE"}
+{"time": "2026-10-04T22:12:27", "event": "stop", "actions": 0}
+{"time": "2026-10-04T22:28:57", "event": "start", "context": "kind-aiops", "namespace": "default", "mode": "ACTIVE"}
+{"time": "2026-10-04T22:32:40", "event": "detected", "service": "cartservice", "metric": "memory_mb", "z": 6.3}
+{"time": "2026-10-04T22:33:13", "event": "restart", "service": "cartservice", "ok": true, "detail": "replaced cartservice-574c7f4cdd-5khvl"}
+{"time": "2026-10-04T22:35:30", "event": "recovered", "service": "cartservice", "metric": "memory_mb", "t_detect": "2026-10-04T22:32:40", "t_action": "2026-10-04T22:32:40", "t_recovered": "2026-10-04T22:35:30", "detail": "CPU, memory and page latency are back within baseline"}
+{"time": "2026-10-04T22:43:57", "event": "stop", "actions": 1}

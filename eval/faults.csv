@@ -19,3 +19,12 @@ net_delay,recommendationservice,2026-10-02T22:40:33,2026-10-02T22:43:40
 net_delay,adservice,2026-10-02T22:48:54,2026-10-02T22:52:00
 net_delay,cartservice,2026-10-02T23:46:23,2026-10-02T23:49:30
 net_delay,paymentservice,2026-10-03T00:02:20,2026-10-03T00:05:26
+cpu_hog,cartservice,2026-10-04T03:23:14,2026-10-04T03:26:21
+cpu_hog,cartservice,2026-10-04T04:27:57,2026-10-04T04:30:57
+cpu_hog,cartservice,2026-10-04T04:44:12,2026-10-04T04:47:13
+cpu_hog,checkoutservice,2026-10-04T05:00:12,2026-10-04T05:03:12
+cpu_hog,currencyservice,2026-10-04T05:11:27,2026-10-04T05:14:28
+mem_leak,paymentservice,2026-10-04T05:39:16,2026-10-04T05:42:16
+mem_leak,checkoutservice,2026-10-04T06:03:23,2026-10-04T06:06:24
+mem_leak,cartservice,2026-10-04T21:59:27,2026-10-04T22:02:29
+mem_leak,cartservice,2026-10-04T22:31:15,2026-10-04T22:34:16

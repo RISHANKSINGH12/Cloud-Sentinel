@@ -1,0 +1,8 @@
+fault,true_service,chosen_service,correct_target,detect_delay_s,recovered,fix_time_s,recovery_time_s,unassisted_s
+cpu_hog,cartservice,cartservice,True,36.0,False,69.0,,180.0
+cpu_hog,cartservice,cartservice,True,40.0,True,72.0,210.0,181.0
+cpu_hog,checkoutservice,checkoutservice,True,32.0,True,44.0,183.0,180.0
+cpu_hog,currencyservice,currencyservice,True,36.0,True,49.0,187.0,181.0
+mem_leak,paymentservice,paymentservice,True,74.0,True,87.0,225.0,180.0
+mem_leak,checkoutservice,checkoutservice,True,29.0,True,40.0,177.0,181.0
+mem_leak,cartservice,cartservice,True,85.0,True,118.0,255.0,181.0
